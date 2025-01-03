@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ViewNumberModalComponent } from '../view-number-modal/view-number-modal.component';
 
 @Component({
   selector: 'app-tabellone',
@@ -107,7 +109,7 @@ ultimoEstratto : INumeroTombola = {numero: 0, estratto:false, smorfia:'smorfia'}
 intestazione:string = 'La tombolata';
 
 
-  constructor() { }
+  constructor(private ngbModal: NgbModal) { }
 
   ngOnInit(): void {
     this.getIntestazione();
@@ -120,6 +122,7 @@ intestazione:string = 'La tombolata';
     this.ultimoEstratto = {numero: this.nonEstratti[posEstratto].numero, estratto:true, smorfia:this.nonEstratti[posEstratto].smorfia}
 
     this.contaEstratti++;
+    this.openViewNumberModal(this.ultimoEstratto)
   }
 
   public svuota() {
@@ -138,8 +141,11 @@ intestazione:string = 'La tombolata';
     
   }
 
-
-
+  openViewNumberModal(numeroEstratto:INumeroTombola){
+    const modal = this.ngbModal.open(ViewNumberModalComponent)
+    modal.componentInstance.numeroEstratto = numeroEstratto.numero; 
+    modal.componentInstance.smorfiaNumeroEstratto = numeroEstratto.smorfia;
+  }
 
 }
 

@@ -10,6 +10,7 @@ import { TabelloneComponent } from './tabellone/tabellone.component';
 import { StampaCartelleComponent } from './stampa-cartelle/stampa-cartelle.component';
 import { ImpostazioniComponent } from './impostazioni/impostazioni.component';
 import { FormsModule } from '@angular/forms';
+import { ViewNumberModalComponent } from './view-number-modal/view-number-modal.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { FormsModule } from '@angular/forms';
     SidebarComponent,
     TabelloneComponent,
     StampaCartelleComponent,
-    ImpostazioniComponent
+    ImpostazioniComponent,
+    ViewNumberModalComponent
   ],
   imports: [
     BrowserModule,
