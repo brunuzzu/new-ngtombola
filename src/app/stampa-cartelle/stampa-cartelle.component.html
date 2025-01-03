@@ -1,0 +1,27 @@
+<div class="flex-container">
+    <div class="row justify-content-center mb-4 shadow-sm py-1 px-5 align-items-center">
+       <span class="fw-bold fs-5 text-danger ">Stampa cartelle</span>        
+    </div>
+    <div class="row mx-1 align-items-end mb-4">
+        <div class="col-6">
+            <p class="mb-0 text-danger fw-bold fs-6">Intestazione</p>
+            <input type="text" name="intestazione" id="intestazione" class="form-control col-2" [(ngModel)]="intestazione">
+        </div>
+        <div class="col">
+            <button class="btn btn-warning" (click)="setIntestazione(intestazione)">Salva</button>
+        </div>
+    </div>
+    <div class="row justify-content-between mx-1 align-items-end ">
+        <div class="col">
+            <p class="mb-0 text-danger fw-bold fs-6">Numero pagine da generare</p>
+            <input type="text" name="numeroCartelle" id="numeroCartelle" class="form-control" [(ngModel)]="numeroPagine">
+        </div>
+        <div class="col">
+            <p class="mb-0 text-danger fw-bold fs-6">Numero cartelle per pagina</p>
+            <input type="number" name="cartellePerPagina" id="cartellePerPagina" class="form-control" [(ngModel)]="cartellePerPagina">
+        </div>
+        <div class="col">
+            <button class="btn btn-warning" (click)="generaCartelle()">Genera</button>
+        </div>
+    </div>
+</div>

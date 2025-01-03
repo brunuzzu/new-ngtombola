@@ -1,0 +1,48 @@
+<div class="flex-container">
+    <div class="row justify-content-between mb-4 shadow-sm py-1 px-5 align-items-end">
+        <div class="col-4">
+            <p class="fw-bold fs-5 text-danger">{{getIntestazione()}}</p>
+        </div>
+        <div class="col">
+            <p class="mb-0 text-danger fw-bold fs-6">Ultimo estratto</p>
+            <input type="text" value="{{ultimoEstratto.numero}}" class="form-control fw-bold  bg-warning border-0 numero-estratto" disabled>
+        </div>
+        <div class="col-2">
+            <p class="mb-0 text-danger fw-bold">Smorfia</p>
+            <input type="text" value="{{ultimoEstratto.smorfia}}" class="form-control fw-bold fs-6  bg-warning border-0"
+                disabled>
+        </div>
+        <div class="col">
+            <p class="mb-0 text-danger fw-bold">Numeri estratti</p>
+            <input type="text" [value]="contaEstratti" disabled class="form-control" />
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-danger" (click)="estrai()">
+                Estrai
+            </button>
+        </div>
+        <div class="col">
+            <button class="btn btn-warning" (click)="svuota()">
+                Ricomincia
+            </button>
+        </div>
+
+
+    </div>
+    <div class="row justify-content-center">
+        <ng-container *ngFor="let num of numeriTombola, let i = index">
+            <div class="col-1" [ngClass]="{'me-4':i==4 || i==14 || i==24 || i==34 || i==44 || i==54 || i==64 || i==74 || i==84}">
+                <button class="btn mb-3 rounded-circle py-1 px-2 fw-bold fs-2" [ngClass]="{'btn-warning':num.estratto, 'btn-danger':!num.estratto}"><span *ngIf="num.numero<10" [ngClass]="{'btn-warning':num.estratto, 'btn-danger':!num.estratto}">&nbsp;&nbsp;</span>{{num.numero}}</button>
+            </div>
+            <!-- <div class="col-2" *ngIf="i==9 || i==19 || i==29 || i==39 || i==49 || i==59 || i==69 || i==79 || i==89">
+            </div> -->
+            <div class="break" *ngIf="i==9 || i==19 || i==29 || i==39 || i==49 || i==59 || i==69 || i==79 || i==89"></div>
+            <div class="mb-3" *ngIf=" i==29 || i==59"></div>
+        </ng-container>
+    </div>
+</div>
+
+
+
+
+

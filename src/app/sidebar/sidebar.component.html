@@ -1,0 +1,23 @@
+<div class="sidebar" [ngClass]="{ 'expanded': isExpanded }">
+    <div class="header">
+        <h1 class="title" *ngIf="isExpanded">
+            La tombola
+        </h1>
+        <div class="toggle" (click)="handleSidebarToggle()">
+            <i class="bi bi-layout-text-sidebar"></i>
+        </div>
+    </div>
+
+
+            <div class="text-white d-flex py-3 ps-2 link" [routerLink]="['home']" [routerLinkActive]="'active'" [ngClass]="{'justify-content-start': isExpanded, 'justify-content-center': !isExpanded }">
+                <i class="bi bi-arrow-through-heart-fill me-2"></i>
+                <div class="title" *ngIf="isExpanded">Tabellone</div>
+            </div>
+
+
+            <div class="text-white d-flex py-3 ps-2 link"  [routerLink]="['stampa-cartelle']" [routerLinkActive]="'active'" [ngClass]="{'justify-content-start': isExpanded, 'justify-content-center': !isExpanded }">
+                <i class="bi bi-printer-fill me-2"></i>
+                <div class="title" *ngIf="isExpanded">Stampa cartelle</div>
+            </div>
+            
+</div>
