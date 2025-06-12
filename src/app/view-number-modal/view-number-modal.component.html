@@ -1,11 +1,12 @@
 <div class="modal-header d-flex justify-content-end">
     <button type="button" class="btn btn-outline-danger" (click)="this.ngbActiveModal.dismiss()">Chiudi</button>
 </div>
-<div class="modal-body text-center d-flex flex-col">
-        <span class="fs-5 fw-bold">Ultimo estratto</span>
-        <span class="number-estratto">
+<div class="modal-body d-flex align-items-center flex-column gy-0">
+        <p class="fs-5 fw-bold mb-0">Ultimo estratto</p>
+        <p class="number-estratto mb-0">
             {{numeroEstratto}}
-        </span>
+        </p>
+        <p class="smorfia mb-0">{{smorfiaNumeroEstratto}}</p>
 </div>
 
 

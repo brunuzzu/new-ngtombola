@@ -11,6 +11,7 @@ import { StampaCartelleComponent } from './stampa-cartelle/stampa-cartelle.compo
 import { ImpostazioniComponent } from './impostazioni/impostazioni.component';
 import { FormsModule } from '@angular/forms';
 import { ViewNumberModalComponent } from './view-number-modal/view-number-modal.component';
+import { RaccoltaFondiComponent } from './raccolta-fondi/raccolta-fondi.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ViewNumberModalComponent } from './view-number-modal/view-number-modal.
     TabelloneComponent,
     StampaCartelleComponent,
     ImpostazioniComponent,
-    ViewNumberModalComponent
+    ViewNumberModalComponent,
+    RaccoltaFondiComponent
   ],
   imports: [
     BrowserModule,

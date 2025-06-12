@@ -6,47 +6,89 @@ import { INumeroTombola } from '../tabellone/tabellone.component';
 @Component({
   selector: 'app-stampa-cartelle',
   templateUrl: './stampa-cartelle.component.html',
-  styleUrls: ['./stampa-cartelle.component.scss']
+  styleUrls: ['./stampa-cartelle.component.scss'],
 })
 export class StampaCartelleComponent implements OnInit {
   doc = new jsPDF();
-  intestazione: string = ''
+  intestazione: string = '';
   numeroPagine: number = 0;
   cartellePerPagina: number = 0;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-    
-    
-  }
+  ngOnInit(): void {}
 
   generaNumeriTombola(): number[][] {
-    const numeri = Array.from({ length: 90 }, (_, i) => i + 1);
-    const cartella: number[][] = [
-      Array(9).fill(null),
-      Array(9).fill(null),
-      Array(9).fill(null)
+    // 1. Prepara le colonne secondo le decine
+    const colonne: number[][] = [
+      Array.from({ length: 9 }, (_, i) => i + 1), // 1-9
+      Array.from({ length: 10 }, (_, i) => i + 10), // 10-19
+      Array.from({ length: 10 }, (_, i) => i + 20), // 20-29
+      Array.from({ length: 10 }, (_, i) => i + 30), // 30-39
+      Array.from({ length: 10 }, (_, i) => i + 40), // 40-49
+      Array.from({ length: 10 }, (_, i) => i + 50), // 50-59
+      Array.from({ length: 10 }, (_, i) => i + 60), // 60-69
+      Array.from({ length: 10 }, (_, i) => i + 70), // 70-79
+      Array.from({ length: 11 }, (_, i) => i + 80), // 80-90
     ];
 
-    for (let r = 0; r < 3; r++) {
-      const rigaNumeri = new Set<number>();
-      while (rigaNumeri.size < 5) {
-        const numero = numeri.splice(Math.floor(Math.random() * numeri.length), 1)[0];
-        const colonna = Math.floor((numero - 1) / 10);
-        if (!cartella[r][colonna]) {
-          cartella[r][colonna] = numero;
-          rigaNumeri.add(numero);
-        }
+    // 2. Scegli quante caselle per colonna (almeno 1, massimo 3, totale 15)
+    const numeriPerColonna = Array(9).fill(1);
+    let restanti = 15 - 9;
+    while (restanti > 0) {
+      const idx = Math.floor(Math.random() * 9);
+      if (numeriPerColonna[idx] < 3) {
+        numeriPerColonna[idx]++;
+        restanti--;
       }
     }
 
-    return cartella;
+    // 3. Estrai i numeri per ogni colonna
+    const numeriEstrattiColonna: number[][] = colonne.map((col, i) => {
+      const estratti: number[] = [];
+      for (let j = 0; j < numeriPerColonna[i]; j++) {
+        const idx = Math.floor(Math.random() * col.length);
+        estratti.push(col.splice(idx, 1)[0]);
+      }
+      return estratti.sort((a, b) => a - b);
+    });
+
+    // 4. Prepara la matrice 3x9 con null
+    const cartella: (number | null)[][] = Array.from({ length: 3 }, () =>
+      Array(9).fill(null)
+    );
+
+    // 5. Distribuisci i numeri sulle righe (ogni riga deve avere 5 numeri)
+    // Per ogni colonna, assegna i numeri a righe diverse
+    const righeDisponibili: number[][] = [[], [], []];
+    for (let c = 0; c < 9; c++) {
+      const righeUsate = new Set<number>();
+      for (const numero of numeriEstrattiColonna[c]) {
+        // Scegli una riga casuale tra quelle disponibili con meno di 5 numeri e non già usata per questa colonna
+        const possibili = [0, 1, 2].filter(
+          (r) => righeDisponibili[r].length < 5 && !righeUsate.has(r)
+        );
+        const r =
+          possibili.length > 0
+            ? possibili[Math.floor(Math.random() * possibili.length)]
+            : [0, 1, 2][Math.floor(Math.random() * 3)];
+        cartella[r][c] = numero;
+        righeDisponibili[r].push(c);
+        righeUsate.add(r);
+      }
+    }
+
+    // 6. Ritorna la cartella (converti null in 0 se preferisci)
+    return cartella as number[][];
   }
 
   generaPDFCartelle(): void {
-    if (!this.intestazione || this.numeroPagine <= 0 || this.cartellePerPagina <= 0) {
-      alert("Compila tutti i campi correttamente.");
+    if (
+      !this.intestazione ||
+      this.numeroPagine <= 0 ||
+      this.cartellePerPagina <= 0
+    ) {
+      alert('Compila tutti i campi correttamente.');
       return;
     }
 
@@ -57,7 +99,7 @@ export class StampaCartelleComponent implements OnInit {
       if (pagina > 0) pdf.addPage();
 
       pdf.setFontSize(22);
-      pdf.setFont("helvetica", "bold");
+      pdf.setFont('helvetica', 'bold');
       pdf.text(this.intestazione, 10, 10);
 
       /* pdf.setFontSize(12);
@@ -73,15 +115,21 @@ export class StampaCartelleComponent implements OnInit {
       }
     }
 
-    pdf.save("cartelle_tombola.pdf");
+    pdf.save('cartelle_tombola.pdf');
   }
 
-  disegnaCartella(pdf: jsPDF, cartella: number[][], startX: number, startY: number, index: number): void {
+  disegnaCartella(
+    pdf: jsPDF,
+    cartella: number[][],
+    startX: number,
+    startY: number,
+    index: number
+  ): void {
     const cellWidth = 20;
     const cellHeight = 15;
 
     pdf.setFontSize(18);
-    pdf.setFont("helvetica", "bold");
+    pdf.setFont('helvetica', 'bold');
     /* pdf.text(`Cartella #${index}`, startX, startY - 5); */
 
     for (let r = 0; r < 3; r++) {
@@ -92,7 +140,9 @@ export class StampaCartelleComponent implements OnInit {
 
         const numero = cartella[r][c];
         if (numero) {
-          pdf.text(`${numero}`, x + cellWidth / 2 - 2, y + cellHeight / 2 + 3, { align: "center" });
+          pdf.text(`${numero}`, x + cellWidth / 2 - 2, y + cellHeight / 2 + 3, {
+            align: 'center',
+          });
         }
       }
     }
@@ -101,7 +151,6 @@ export class StampaCartelleComponent implements OnInit {
   generaCartelle(): void {
     this.generaPDFCartelle();
   }
-
 
   /* public generaCartelle() {
     let contaCartelle: number = 0;
@@ -130,7 +179,7 @@ export class StampaCartelleComponent implements OnInit {
     this.doc.save('CartelleTombola.pdf')
   } */
 
- /*  generaNumeriCartelle() {
+  /*  generaNumeriCartelle() {
     let tuttiNumeri: INumeroTombola[] = Array(90).fill(0).map((_, idx) => { return { numero: 1 + idx, estratto: false } as INumeroTombola });
     let numeriCartella: number[] = [];
     let primaRiga:number[]=[];
@@ -160,13 +209,13 @@ export class StampaCartelleComponent implements OnInit {
   } */
 
   setIntestazione(value: any) {
-    localStorage.setItem('title', value)
+    localStorage.setItem('title', value);
   }
 
   //controllare se ci sono numeri della stessa decina
   //se ci sono, estrarre numero dalla decina con zero numeri estratti
   //se non ci sono restituire decina già estratta
-  
+
   /* checkDecine(rigaEstratta:number[]){
     let arrayDecine = rigaEstratta.map(el=> ({
       numero: el, 
@@ -180,17 +229,8 @@ export class StampaCartelleComponent implements OnInit {
     })
     //zero
     console.log("conta numeri per decade", numeriPerDecade)
-  }  */ 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  }  */
+
   /* divideArrayByDecade(numbersArray: number[]) {
    
 
@@ -212,13 +252,11 @@ export class StampaCartelleComponent implements OnInit {
     return numeriPerDecade;
   } */
 
-
   /* getRandomNumberBetween(a: number, b: number, excludeUpperBound: number): number {
   const randomNumber = Math.floor(Math.random() * (b - a)) + a;
   return randomNumber < excludeUpperBound ? randomNumber : this.getRandomNumberBetween(a, b, excludeUpperBound);
 } */
-  
-  
+
   /* findLeastFrequent(numbers: number[]): number {
   const frequencyMap = new Map<number, number>();
 
@@ -237,7 +275,7 @@ export class StampaCartelleComponent implements OnInit {
   return leastFrequent;
 } */
 
-/* getOccurrence(array:any[], value:number) {
+  /* getOccurrence(array:any[], value:number) {
   return array.filter((v) => (v === value)).length;
 } */
 }

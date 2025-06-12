@@ -5,13 +5,14 @@ import { StampaCartelleComponent } from './stampa-cartelle/stampa-cartelle.compo
 import { TabelloneComponent } from './tabellone/tabellone.component';
 
 const routes: Routes = [
-    {path:'', component:TabelloneComponent},
+  { path: '', component: TabelloneComponent },
   { path: 'home', component: TabelloneComponent },
-    {path:'stampa-cartelle', component:StampaCartelleComponent},      
+  { path: 'stampa-cartelle', component: StampaCartelleComponent },
+  { path: 'impostazioni', component: ImpostazioniComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

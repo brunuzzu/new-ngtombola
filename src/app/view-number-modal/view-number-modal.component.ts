@@ -14,6 +14,9 @@ export class ViewNumberModalComponent implements OnInit {
   constructor(public ngbActiveModal: NgbActiveModal) { }
 
   ngOnInit(): void {
+    setTimeout(() => {
+      this.ngbActiveModal.close()
+    },5000); // Simulate a delay for the modal to open
   }
 
 }
