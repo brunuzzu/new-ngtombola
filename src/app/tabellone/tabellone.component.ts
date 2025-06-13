@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ViewNumberModalComponent } from '../view-number-modal/view-number-modal.component';
+import { SettingService } from '../services/setting.service';
 
 @Component({
   selector: 'app-tabellone',
   templateUrl: './tabellone.component.html',
-  styleUrls: ['./tabellone.component.scss']
+  styleUrls: ['./tabellone.component.scss'],
 })
 export class TabelloneComponent implements OnInit {
-  
-  smorfia:string[]= [ 
-    'L\'Italia',
+  smorfia: string[] = [
+    "L'Italia",
     'La bambina',
     'La gatta',
     'Il maiale',
@@ -23,7 +23,7 @@ export class TabelloneComponent implements OnInit {
     'I topi',
     'I soldati',
     'S. Antonio',
-    'L\'ubriaco',
+    "L'ubriaco",
     'Il ragazzo',
     'Il culo',
     'La sfortuna',
@@ -44,12 +44,12 @@ export class TabelloneComponent implements OnInit {
     'Il capitone',
     'Gli anni di Cristo',
     'La testa',
-    'L\'uccello',
+    "L'uccello",
     'Le nacchere',
     'Il monaco',
     'Le bastonate',
     'Una corda al collo',
-    'L\'ernia',
+    "L'ernia",
     'Il coltello',
     'Il caffè',
     'Donna al balcone',
@@ -82,7 +82,7 @@ export class TabelloneComponent implements OnInit {
     'Il palazzo',
     'Uomo senza valore',
     'Lo stupore',
-    'L\'ospedale',
+    "L'ospedale",
     'La grotta',
     'Pulcinella ',
     'La fontana',
@@ -100,58 +100,80 @@ export class TabelloneComponent implements OnInit {
     'I caciocavalli',
     'La vecchia',
     'La paura',
-  ]
+  ];
 
-numeriTombola: INumeroTombola[] = Array(90).fill(0).map((_, idx) => { return { numero: 1 + idx, estratto: false, smorfia:this.smorfia[idx] } as INumeroTombola }) 
-contaEstratti: number = 0;
-nonEstratti?: INumeroTombola[];
-ultimoEstratto : INumeroTombola = {numero: 0, estratto:false, smorfia:'smorfia'}as INumeroTombola;
-intestazione:string = 'La tombolata';
+  numeriTombola: INumeroTombola[] = Array(90)
+    .fill(0)
+    .map((_, idx) => {
+      return {
+        numero: 1 + idx,
+        estratto: false,
+        smorfia: this.smorfia[idx],
+      } as INumeroTombola;
+    });
+  contaEstratti: number = 0;
+  nonEstratti?: INumeroTombola[];
+  ultimoEstratto: INumeroTombola = {
+    numero: 0,
+    estratto: false,
+    smorfia: 'smorfia',
+  } as INumeroTombola;
+  intestazione: string = 'La tombolata';
+  showLastNumberModal: boolean = false;
+  lastNumberTime: number = 0;
 
-
-  constructor(private ngbModal: NgbModal) { }
+  constructor(
+    private ngbModal: NgbModal,
+    private settingService: SettingService
+  ) {}
 
   ngOnInit(): void {
     this.getIntestazione();
+    this.showLastNumberModal = this.settingService.getLastNumberModalIsActive();
+    this.lastNumberTime = this.settingService.getLastNumberTime();
   }
 
   public estrai() {
-    this.nonEstratti = this.numeriTombola.filter(el => el.estratto == false);
-    let posEstratto = (Math.floor(Math.random() * this.nonEstratti.length));
+    this.nonEstratti = this.numeriTombola.filter((el) => el.estratto == false);
+    let posEstratto = Math.floor(Math.random() * this.nonEstratti.length);
     this.nonEstratti[posEstratto].estratto = true;
-    this.ultimoEstratto = {numero: this.nonEstratti[posEstratto].numero, estratto:true, smorfia:this.nonEstratti[posEstratto].smorfia}
+    this.ultimoEstratto = {
+      numero: this.nonEstratti[posEstratto].numero,
+      estratto: true,
+      smorfia: this.nonEstratti[posEstratto].smorfia,
+    };
 
     this.contaEstratti++;
-    this.openViewNumberModal(this.ultimoEstratto)
+    this.openViewNumberModal(this.ultimoEstratto);
   }
 
   public svuota() {
-    this.numeriTombola.map(el => el.estratto = false);
+    this.numeriTombola.map((el) => (el.estratto = false));
     this.contaEstratti = 0;
-    this.ultimoEstratto = {numero: 0, estratto:false, smorfia:''}; 
+    this.ultimoEstratto = { numero: 0, estratto: false, smorfia: '' };
   }
 
-  getIntestazione(){
-    if(localStorage.getItem('title')){
-      return localStorage.getItem('title')
+  getIntestazione() {
+    if (localStorage.getItem('title')) {
+      return localStorage.getItem('title');
+    } else {
+      return 'La Super Tombolata';
     }
-    else{
-      return 'La Super Tombolata'
+  }
+
+  openViewNumberModal(numeroEstratto: INumeroTombola) {
+    if (this.showLastNumberModal) {
+      const modal = this.ngbModal.open(ViewNumberModalComponent);
+      modal.componentInstance.numeroEstratto = numeroEstratto.numero;
+      modal.componentInstance.smorfiaNumeroEstratto = numeroEstratto.smorfia;
+      modal.componentInstance.showLastNumberModal = this.showLastNumberModal;
+      modal.componentInstance.lastNumberTime = this.lastNumberTime;
     }
-    
   }
-
-  openViewNumberModal(numeroEstratto:INumeroTombola){
-    const modal = this.ngbModal.open(ViewNumberModalComponent)
-    modal.componentInstance.numeroEstratto = numeroEstratto.numero; 
-    modal.componentInstance.smorfiaNumeroEstratto = numeroEstratto.smorfia;
-  }
-
 }
 
-
 export interface INumeroTombola {
-  numero: number; 
-  estratto:boolean;
-  smorfia?: string
+  numero: number;
+  estratto: boolean;
+  smorfia?: string;
 }
